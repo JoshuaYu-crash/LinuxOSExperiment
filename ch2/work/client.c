@@ -16,7 +16,7 @@ int main() {
     while(1) {
         printf("write : ");
         char read_str[MAX_LEN];
-        scanf("%d", )
+        scanf("%d", read_str);
         if (fputs(read_str, fp) == EOF) {
             printf("write fifo error. \n");
             exit(1);
