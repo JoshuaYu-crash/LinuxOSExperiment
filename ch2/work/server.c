@@ -8,7 +8,7 @@
 
 
 // Create FIFO-FILE if not exists
-void init() {
+void init(FILE *fp) {
     if ((fp = fopen(FIFO_FILE, "r")) == NULL) {/*如果命名管道文件不存在，要先创建一个*/
         umask(0);//清除文件创建时权限位的屏蔽作用
         mknod(FIFO_FILE, S_IFIFO | 0666, 0);//创建FIFO文件
@@ -23,7 +23,7 @@ int main() {
     FILE *fp;
     char readbuf[80];
 
-    init()
+    init(fp);
 
     while (1) {
         if ((fp = fopen(FIFO_FILE, "r")) == NULL) {/*打开命名管道文件*/
