@@ -12,6 +12,8 @@ int main() {
     shmid = open_shmid(shmid, key);
     shmptr = create_shmptr(shmptr, shmid);
 
+    printf("This is the client, now you can send a message to the server, please enter the message and press Enter to send\n");
+
     if ((p = fork()) < 0) {
         printf("Fork failed\n");
         exit(1);
