@@ -27,7 +27,7 @@ int open_shmid(int shmid, int key){
 }
 
 
-//
+// 附加共享内存到自身缓存空间，返回指针
 char * create_shmptr(char * shmptr, int shmid) {
     if ((shmptr = shmat(shmid, 0, 0)) == (char *) -1) {
         shmctl(shmid, IPC_RMID, (struct shmid_ds *) shmptr);

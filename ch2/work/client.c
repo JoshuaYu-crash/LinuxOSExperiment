@@ -7,8 +7,9 @@ int main() {
     char c;
     char *shmptr, *s;
     int cnt;
-    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stdout, NULL, _IONBF, 0); // 关闭输出缓存
 
+    // 调用函数打开共享内存空间
     shmid = open_shmid(shmid, key);
     shmptr = create_shmptr(shmptr, shmid);
 
@@ -20,6 +21,7 @@ int main() {
     }
 
     while (1) {
+        // 子进程接收数据
         if (p == 0) {
             while (*shmptr != 's') {
                 sleep(1);
@@ -34,10 +36,11 @@ int main() {
             printf("\n>> ");
             *shmptr = '#';
         }
+        // 父进程发送数据
         else {
             printf(">> ");
             scanf("%[^\n]", shmptr + 1);
-            getchar();
+            getchar(); // 吸收最后回车
             *shmptr = 'c';
             while (*shmptr != '#') {
                 sleep(1);
