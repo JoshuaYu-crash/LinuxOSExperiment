@@ -1,60 +1,46 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <linux/stat.h>
-
-#define FIFO_FILE "/tmp/TEMPFIFO" /*命名管道的路径、文件名*/
-
-
-// Create FIFO-FILE if not exists
-void init(FILE *fp) {
-    if ((fp = fopen(FIFO_FILE, "r")) == NULL) {/*如果命名管道文件不存在，要先创建一个*/
-        umask(0);//清除文件创建时权限位的屏蔽作用
-        mknod(FIFO_FILE, S_IFIFO | 0666, 0);//创建FIFO文件
-        printf("Create new FIFO-FILE successed. \n");
-    } else {
-        fclose(fp);
-    }
-}
-
+#include "semshm.h"
 
 int main() {
-    FILE *fp;
-    init(fp);
+    int shmid;
+    int key = 1022;
+    pid_t p;
+    char c;
+    char *shmptr, *s;
+    int cnt;
+    setvbuf(stdout, NULL, _IONBF, 0);
 
+    shmid = create_shmid(shmid, key);
+    shmptr = create_shmptr(shmptr, shmid);
 
-    int i, pid;
-    while((pid=fork())==-1);
-    // receive msg
-    if(pid == 0) {
-        while (1) {
-            char readbuf[MAX_LEN];
-            fp = openfile(fp, "r")
-            if (fgets(readbuf, MAX_LEN, fp) != NULL) {/*从命名管道文件中读数据*/
-                printf("Received message from Server :%s \n", readbuf);
-                fclose(fp);
-            }
-            else {
-                if (ferror(fp)) {
-                    printf("read fifo failed.\n");
-                    exit(1);
-                }
-            }
-        }
+    if ((p = fork()) < 0) {
+        printf("Fork failed\n");
+        exit(1);
     }
-    // send msg
-    else {
-        while(1) {
-            fp = openfile(fp, "w");
-            printf("Wait for you send\n>> ");
-            char read_str[MAX_LEN];
-            scanf("%s", read_str);
-            if (fputs(read_str, fp) == EOF) {
-                printf("write fifo error. \n");
-                exit(1);
+
+    while (1) {
+        if (p == 0) {
+            while (*shmptr != 'c') {
+                sleep(1);
             }
-            fclose(fp);
+            printf("\n\033[43;37mReceive From Client:\33[0m ");
+            cnt = 0;
+            for (s = shmptr + 1; *s != '\0'; s++) {
+                cnt++;
+                putchar(*s);
+            }
+            printf("\nReceive Total %d letter", cnt);
+            printf("\n>> ");
+            *shmptr = '#';
+        }
+        else{
+            printf(">> ");
+            scanf("%[^\n]", shmptr + 1);
+            getchar();
+            *shmptr = 's';
+            while (*shmptr != '#') {
+                sleep(1);
+            }
+            printf("\033[46;37mSuccessfully Sent\33[0m\n");
         }
     }
     return 0;
