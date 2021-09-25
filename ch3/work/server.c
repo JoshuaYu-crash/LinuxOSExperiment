@@ -27,7 +27,7 @@ int main() {
     while (1) {
         if (recv(c_fd, buf, 256, 0) > 0) //接收消息recv(c_fd,buf,256,0)>0
         {
-            printf("收到客户端消息: %s\n", buf);//输出到终端
+            printf("\033[46;37m收到客户端消息: %s\33[0m\n", buf);//输出到终端
             printf("请输入返回客户端的消息: ");
             scanf("%s", sendbuf);
             send(c_fd, sendbuf, sizeof(sendbuf), 0);//回复消息

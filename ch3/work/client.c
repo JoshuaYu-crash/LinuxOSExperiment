@@ -78,7 +78,7 @@ int main() {
                 save_record(buf, 1);   // 保存消息到本地
                 // 接收消息
                 if(recv(sockfd,rebuf,256,0)>0) {
-                    printf("收到服务器消息: %s\n",rebuf);
+                    printf("\033[46;37m收到服务器消息: %s\33[0m\n",rebuf);
                 }
                 save_record(rebuf, 2); // 保存消息到本地
             }
